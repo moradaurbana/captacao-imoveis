@@ -220,12 +220,11 @@ export default function RealEstateForm() {
       <div className="text-center mb-10">
         <div className="flex flex-col items-center gap-4 mb-6">
           <img 
-            src="https://ais-pre-ql5ggp5yktyida5n2veq4x-27448054035.us-east1.run.app/input_file_0.png" 
+            src="logo.png" 
             alt="Morada Urbana Logo" 
             className="h-32 w-auto object-contain"
             referrerPolicy="no-referrer"
           />
-        </div>
         <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Ficha de Captação de Imóveis</h1>
         <p className="text-slate-500 mt-2">Morada Urbana - Consultoria Imobiliária</p>
       </div>
