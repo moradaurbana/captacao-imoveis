@@ -32,6 +32,15 @@ const DIFERENCIAIS_MAP: Record<string, string[]> = {
   'Quintal': ['casa', 'sobrado', 'sítio', 'terreno', 'loja'],
   'Piscina': ['casa', 'sobrado', 'sítio', 'cobertura', 'apartamento'],
   'Varanda': ['apartamento', 'cobertura', 'casa', 'sobrado', 'studio'],
+  'Varanda Gourmet': ['apartamento', 'cobertura'],
+  'Vista Panorâmica': ['apartamento', 'cobertura', 'casa', 'sobrado'],
+  'Armários Planejados': ['apartamento', 'casa', 'cobertura', 'studio', 'sobrado'],
+  'Closet': ['apartamento', 'casa', 'cobertura', 'sobrado'],
+  'Lavabo': ['apartamento', 'casa', 'cobertura', 'sobrado', 'conjunto', 'sala'],
+  'Cozinha Americana': ['apartamento', 'casa', 'studio', 'sobrado'],
+  'Piso de Madeira / Porcelanato': ['apartamento', 'casa', 'cobertura', 'sobrado', 'studio'],
+  'Fechadura Eletrônica': ['apartamento', 'casa', 'studio', 'sobrado', 'conjunto', 'sala'],
+  'Mobiliado (Porteira Fechada)': ['apartamento', 'casa', 'cobertura', 'studio', 'sobrado'],
   'Sacada': ['apartamento', 'cobertura', 'studio'],
   'Aceita pet': ['apartamento', 'casa', 'cobertura', 'sobrado', 'sítio', 'studio'],
 };
@@ -143,6 +152,7 @@ export default function RealEstateForm() {
       valorVenda: '',
       numeroMatricula: '',
       aceitaProposta: '',
+      aceitaPermuta: '',
       valorAluguel: '',
       valorCondominio: '',
       valorIptu: '',
@@ -433,13 +443,27 @@ export default function RealEstateForm() {
                 {tipoCaptacao === 'venda' ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <InputField label="Valor de venda" name="valorVenda" mask={maskCurrency} placeholder="R$ 0,00" control={control} errors={errors} />
+                    <InputField label="IPTU Mensal" name="valorIptu" mask={maskCurrency} placeholder="R$ 0,00" control={control} errors={errors} />
                     <InputField label="Número da matrícula" name="numeroMatricula" control={control} errors={errors} />
+                    
                     <div className="flex flex-col gap-3">
                       <label className="text-sm font-medium text-slate-700">Aceita proposta?</label>
                       <div className="flex gap-4">
                         {['Sim', 'Não'].map(val => (
                           <label key={val} className="flex items-center gap-2 cursor-pointer">
                             <input type="radio" value={val} {...register('aceitaProposta')} className="accent-brand-orange" />
+                            <span className="text-sm text-slate-600">{val}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-3">
+                      <label className="text-sm font-medium text-slate-700">Aceita permuta?</label>
+                      <div className="flex gap-4">
+                        {['Sim', 'Não'].map(val => (
+                          <label key={val} className="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" value={val} {...register('aceitaPermuta')} className="accent-brand-orange" />
                             <span className="text-sm text-slate-600">{val}</span>
                           </label>
                         ))}
@@ -532,17 +556,17 @@ export default function RealEstateForm() {
           )}
         </div>
 
-        {submitStatus === 'success' && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-center p-4 bg-emerald-50 text-emerald-700 rounded-2xl border border-emerald-100 font-medium">
-            Ficha enviada com sucesso! Nossa equipe entrará em contato.
+        {submitStatus === 'error' && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-center p-4 bg-red-50 text-red-700 rounded-2xl border border-red-100 font-medium">
+            Erro ao enviar. Verifique se a URL no console (F12) está correta.
           </motion.div>
         )}
 
-        {submitStatus === 'error' && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-center p-4 bg-red-50 text-red-700 rounded-2xl border border-red-100 font-medium">
-            Erro ao enviar. Verifique a conexão ou a URL do Webhook no console (F12).
-          </motion.div>
-        )}
+        <div className="text-center mt-8 pt-8 border-t border-slate-100">
+          <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">
+            Versão: 2.0 - Webhook Ativo 🚀
+          </p>
+        </div>
       </form>
     </div>
   );
