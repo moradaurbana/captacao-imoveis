@@ -194,11 +194,38 @@ export default function RealEstateForm() {
     setIsSubmitting(true);
     setSubmitStatus('idle');
     
+    // ATENÇÃO: COLOQUE SUA URL DO N8N ENTRE AS ASPAS ABAIXO
+    const WEBHOOK_URL = 'https://n8n.srv1485851.hstgr.cloud/webhook-test/captacao-imoveis'; 
+    
+    console.log('🚀 Iniciando envio para n8n...');
+    console.log('📍 Endpoint:', WEBHOOK_URL);
+
     try {
-      console.log('Enviando para n8n:', data);
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      if (!WEBHOOK_URL || WEBHOOK_URL.includes('COLE_AQUI')) {
+        console.error('❌ ERRO: Você esqueceu de colocar a URL do n8n no código!');
+        throw new Error('URL do Webhook não configurada');
+      }
+
+      const response = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...data,
+          dataEnvio: new Date().toISOString(),
+          origem: 'Formulário de Captação Web'
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao enviar dados para o servidor');
+      }
+
+      console.log('✅ Sucesso! Dados recebidos pelo n8n.');
       setSubmitStatus('success');
     } catch (error) {
+      console.error('❌ Erro na integração:', error);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
@@ -508,6 +535,12 @@ export default function RealEstateForm() {
         {submitStatus === 'success' && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-center p-4 bg-emerald-50 text-emerald-700 rounded-2xl border border-emerald-100 font-medium">
             Ficha enviada com sucesso! Nossa equipe entrará em contato.
+          </motion.div>
+        )}
+
+        {submitStatus === 'error' && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-center p-4 bg-red-50 text-red-700 rounded-2xl border border-red-100 font-medium">
+            Erro ao enviar. Verifique a conexão ou a URL do Webhook no console (F12).
           </motion.div>
         )}
       </form>
