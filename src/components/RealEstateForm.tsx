@@ -225,6 +225,7 @@ export default function RealEstateForm() {
             className="h-32 w-auto object-contain"
             referrerPolicy="no-referrer"
           />
+        </div>
         <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Ficha de Captação de Imóveis</h1>
         <p className="text-slate-500 mt-2">Morada Urbana - Consultoria Imobiliária</p>
       </div>
