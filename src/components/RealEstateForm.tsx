@@ -292,10 +292,13 @@ export default function RealEstateForm() {
     
     let WEBHOOK_URL = import.meta.env.VITE_N8N_WEBHOOK_URL || 'URL_NAO_CONFIGURADA';
     
+    console.log('🚀 Iniciando envio para n8n...');
+    console.log('📍 URL original do .env:', WEBHOOK_URL);
+
     // Fail-safe: Se a URL contiver 'webhook-test', removemos o '-test' para garantir que vá para produção
-    // Isso evita erros comuns de esquecer a URL de teste no .env
     if (WEBHOOK_URL.includes('/webhook-test/')) {
       WEBHOOK_URL = WEBHOOK_URL.replace('/webhook-test/', '/webhook/');
+      console.log('🔄 URL convertida para produção:', WEBHOOK_URL);
     }
     
     try {
