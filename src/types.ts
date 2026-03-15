@@ -32,10 +32,15 @@ export interface FormData {
   numeroUnidade?: string;
   areaUtil?: string;
   areaTotal?: string;
+  areaTerreno?: string;
   vagas?: string;
   dormitorios?: string;
   suites?: string;
   banheiros?: string;
+  peDireito?: string;
+  topografia?: string;
+  temNascente?: boolean;
+  temMataNativa?: boolean;
   diferenciais: string[];
 
   // Venda

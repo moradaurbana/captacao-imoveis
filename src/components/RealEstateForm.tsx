@@ -229,6 +229,11 @@ export default function RealEstateForm() {
       dormitorios: '',
       suites: '',
       banheiros: '',
+      areaTerreno: '',
+      peDireito: '',
+      topografia: '',
+      temNascente: false,
+      temMataNativa: false,
       diferenciais: [],
       valorVenda: '',
       numeroMatricula: '',
@@ -302,6 +307,7 @@ export default function RealEstateForm() {
         },
         body: JSON.stringify({
           ...data,
+          diferenciais: data.diferenciais.join(', '),
           dataEnvio: new Date().toISOString(),
           origem: 'Formulário de Captação Web'
         }),
@@ -462,6 +468,44 @@ export default function RealEstateForm() {
               <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mt-8">
                 <InputField label="Área útil (m²)" name="areaUtil" type="number" control={control} errors={errors} />
                 <InputField label="Área total (m²)" name="areaTotal" type="number" control={control} errors={errors} />
+                
+                {['terreno', 'sítio'].includes(tipoImovel) && (
+                  <InputField label="Área do terreno (m²)" name="areaTerreno" type="number" control={control} errors={errors} />
+                )}
+
+                {['galpão', 'loja', 'ponto'].includes(tipoImovel) && (
+                  <InputField label="Pé direito (m)" name="peDireito" type="number" control={control} errors={errors} />
+                )}
+
+                {tipoImovel === 'terreno' && (
+                  <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <SelectField 
+                      label="Topografia" 
+                      name="topografia" 
+                      options={[
+                        { value: 'plano', label: 'Plano' },
+                        { value: 'aclive', label: 'Aclive' },
+                        { value: 'declive', label: 'Declive' },
+                        { value: 'irregular', label: 'Irregular' }
+                      ]} 
+                      register={register} 
+                      errors={errors} 
+                    />
+                  </div>
+                )}
+
+                {tipoImovel === 'sítio' && (
+                  <div className="md:col-span-2 flex gap-8 mt-2">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="checkbox" {...register('temNascente')} className="w-4 h-4 rounded border-slate-300 text-brand-orange focus:ring-brand-orange" />
+                      <span className="text-sm text-slate-700">Tem nascente?</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="checkbox" {...register('temMataNativa')} className="w-4 h-4 rounded border-slate-300 text-brand-orange focus:ring-brand-orange" />
+                      <span className="text-sm text-slate-700">Tem mata nativa?</span>
+                    </label>
+                  </div>
+                )}
                 
                 {!['terreno', 'galpão', 'loja', 'ponto'].includes(tipoImovel) && (
                   <>
