@@ -290,37 +290,38 @@ export default function RealEstateForm() {
     setIsSubmitting(true);
     setSubmitStatus('idle');
     
-    const WEBHOOK_URL = import.meta.env.VITE_N8N_WEBHOOK_URL || 'URL_NAO_CONFIGURADA';
-    console.log('🚀 Iniciando envio para n8n...');
-    console.log('📍 Endpoint:', WEBHOOK_URL);
-
+    let WEBHOOK_URL = import.meta.env.VITE_N8N_WEBHOOK_URL || 'URL_NAO_CONFIGURADA';
+    
+    // Fail-safe: Se a URL contiver 'webhook-test', removemos o '-test' para garantir que vá para produção
+    // Isso evita erros comuns de esquecer a URL de teste no .env
+    if (WEBHOOK_URL.includes('/webhook-test/')) {
+      WEBHOOK_URL = WEBHOOK_URL.replace('/webhook-test/', '/webhook/');
+    }
+    
     try {
       if (!WEBHOOK_URL || WEBHOOK_URL === 'URL_NAO_CONFIGURADA') {
-        console.error('❌ ERRO: A URL do Webhook não foi encontrada no arquivo .env');
         throw new Error('URL do Webhook não configurada');
       }
 
+      // Preparamos o objeto de envio
+      const payload = {
+        ...data,
+        // Transformamos arrays em texto legível para o payload
+        diferenciais: data.diferenciais.join(', '),
+        garantiasAceitas: data.garantiasAceitas.join(', '),
+        dataEnvio: new Date().toLocaleString('pt-BR'),
+        origem: 'Formulário Morada Urbana'
+      };
+
       const response = await fetch(WEBHOOK_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...data,
-          diferenciais: data.diferenciais.join(', '),
-          dataEnvio: new Date().toISOString(),
-          origem: 'Formulário de Captação Web'
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
 
-      if (!response.ok) {
-        throw new Error('Erro ao enviar dados para o servidor');
-      }
+      if (!response.ok) throw new Error('Erro ao enviar');
 
       setSubmitStatus('success');
-      // Opcional: Resetar o formulário após sucesso
-      // reset(); 
-      // setCurrentStep(1);
     } catch (error) {
       console.error('Erro na integração:', error);
       setSubmitStatus('error');
