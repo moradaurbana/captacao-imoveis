@@ -290,26 +290,50 @@ export default function RealEstateForm() {
     setIsSubmitting(true);
     setSubmitStatus('idle');
     
-    let WEBHOOK_URL = import.meta.env.VITE_N8N_WEBHOOK_URL || 'URL_NAO_CONFIGURADA';
+    // URL de Produção como fallback definitivo
+    const PROD_URL = 'https://n8n.srv1485851.hstgr.cloud/webhook/captacao-imoveis';
     
-    console.log('🚀 Iniciando envio para n8n...');
-    console.log('📍 URL original do .env:', WEBHOOK_URL);
+    // FORÇAMOS A URL DE PRODUÇÃO SE ESTIVERMOS NO GITHUB PAGES
+    const isGitHubPages = window.location.hostname.includes('github.io');
+    let WEBHOOK_URL = isGitHubPages ? PROD_URL : (import.meta.env.VITE_N8N_WEBHOOK_URL || PROD_URL);
+    
+    console.log('🚀 V3 - SISTEMA DE TRAVA ATIVADO');
 
-    // Fail-safe: Se a URL contiver 'webhook-test', removemos o '-test' para garantir que vá para produção
+    // Se a URL contiver 'webhook-test', forçamos a PROD_URL
     if (WEBHOOK_URL.includes('/webhook-test/')) {
-      WEBHOOK_URL = WEBHOOK_URL.replace('/webhook-test/', '/webhook/');
-      console.log('🔄 URL convertida para produção:', WEBHOOK_URL);
+      console.log('⚠️ URL de teste detectada. Forçando Produção.');
+      WEBHOOK_URL = PROD_URL;
     }
+
+    console.log('📍 URL Final:', WEBHOOK_URL);
     
     try {
       if (!WEBHOOK_URL || WEBHOOK_URL === 'URL_NAO_CONFIGURADA') {
         throw new Error('URL do Webhook não configurada');
       }
 
+      // Função auxiliar para limpar valores monetários e áreas (remover R$, pontos e manter apenas números)
+      const cleanNumber = (value: any) => {
+        if (!value) return 0;
+        if (typeof value === 'number') return value;
+        const cleaned = value.toString().replace(/\D/g, '');
+        return cleaned ? parseInt(cleaned, 10) : 0;
+      };
+
       // Preparamos o objeto de envio
       const payload = {
         ...data,
-        // Transformamos arrays em texto legível para o payload
+        // Valores limpos para o Banco de Dados (Supabase)
+        valorVenda_num: cleanNumber(data.valorVenda),
+        valorLocacao_num: cleanNumber(data.valorLocacao),
+        valorCondominio_num: cleanNumber(data.valorCondominio),
+        valorIptu_num: cleanNumber(data.valorIptu),
+        areaTotal_num: cleanNumber(data.areaTotal),
+        areaUtil_num: cleanNumber(data.areaUtil),
+        // Mantemos as strings originais caso queira usar em e-mails
+        valorVenda: data.valorVenda,
+        valorLocacao: data.valorLocacao,
+        // Transformamos arrays em texto legível
         diferenciais: data.diferenciais.join(', '),
         garantiasAceitas: data.garantiasAceitas.join(', '),
         dataEnvio: new Date().toLocaleString('pt-BR'),
@@ -346,6 +370,7 @@ export default function RealEstateForm() {
     <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6">
       {/* Header */}
       <div className="text-center mb-10">
+        <span className="text-[10px] text-slate-400 uppercase tracking-widest mb-2 block">Versão 3.1 - DB Ready</span>
         <div className="flex flex-col items-center gap-4 mb-6">
           <img 
             src={`${import.meta.env.BASE_URL}logo.png`} 
