@@ -113,6 +113,17 @@ const DIFERENCIAIS_MAP: Record<string, string[]> = {
   'Campo de Futebol': ['sítio', 'casa', 'sobrado'],
   'Tanque de Peixe': ['sítio'],
   'Galpão de Máquinas': ['sítio', 'galpão'],
+  'Murado': ['terreno', 'casa', 'sobrado'],
+  'Cercado': ['terreno', 'sítio'],
+  'Terraplanagem Realizada': ['terreno'],
+  'Rede de Esgoto': ['terreno', 'casa', 'sobrado'],
+  'Rede de Água': ['terreno', 'casa', 'sobrado'],
+  'Rede Elétrica': ['terreno', 'casa', 'sobrado'],
+  'Pavimentação': ['terreno', 'galpão'],
+  'Escriturado e Registrado': ['terreno', 'sítio', 'casa', 'sobrado', 'apartamento'],
+  'Condomínio Fechado': ['terreno', 'casa', 'apartamento', 'sobrado'],
+  'Loteamento Aberto': ['terreno'],
+  'Iluminação Pública': ['terreno'],
 };
 
 const SectionHeader = ({ icon: Icon, title, description }: { icon: any, title: string, description: string }) => (
