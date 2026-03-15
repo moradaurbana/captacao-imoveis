@@ -443,6 +443,7 @@ export default function RealEstateForm() {
                 {tipoCaptacao === 'venda' ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <InputField label="Valor de venda" name="valorVenda" mask={maskCurrency} placeholder="R$ 0,00" control={control} errors={errors} />
+                    <InputField label="Condomínio" name="valorCondominio" mask={maskCurrency} placeholder="R$ 0,00" control={control} errors={errors} />
                     <InputField label="IPTU Mensal" name="valorIptu" mask={maskCurrency} placeholder="R$ 0,00" control={control} errors={errors} />
                     <InputField label="Número da matrícula" name="numeroMatricula" control={control} errors={errors} />
                     
