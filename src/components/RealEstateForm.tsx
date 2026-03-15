@@ -43,6 +43,13 @@ const DIFERENCIAIS_MAP: Record<string, string[]> = {
   'Mobiliado (Porteira Fechada)': ['apartamento', 'casa', 'cobertura', 'studio', 'sobrado'],
   'Sacada': ['apartamento', 'cobertura', 'studio'],
   'Aceita pet': ['apartamento', 'casa', 'cobertura', 'sobrado', 'sítio', 'studio'],
+  'Piso Elevado': ['andar corporativo', 'conjunto'],
+  'Forro Rebaixado / Mineral': ['andar corporativo', 'conjunto', 'sala'],
+  'Ar Condicionado Central': ['andar corporativo', 'conjunto'],
+  'Gerador de Energia': ['andar corporativo', 'conjunto', 'casa', 'sobrado'],
+  'Copa': ['andar corporativo', 'conjunto', 'sala', 'loja'],
+  'Sala de CPD': ['andar corporativo', 'conjunto'],
+  'Recepção': ['andar corporativo', 'conjunto', 'sala'],
 };
 
 const SectionHeader = ({ icon: Icon, title, description }: { icon: any, title: string, description: string }) => (
@@ -204,15 +211,13 @@ export default function RealEstateForm() {
     setIsSubmitting(true);
     setSubmitStatus('idle');
     
-    // ATENÇÃO: COLOQUE SUA URL DO N8N ENTRE AS ASPAS ABAIXO
-    const WEBHOOK_URL = 'https://n8n.srv1485851.hstgr.cloud/webhook-test/captacao-imoveis'; 
-    
+    const WEBHOOK_URL = import.meta.env.VITE_N8N_WEBHOOK_URL || 'URL_NAO_CONFIGURADA';
     console.log('🚀 Iniciando envio para n8n...');
     console.log('📍 Endpoint:', WEBHOOK_URL);
 
     try {
-      if (!WEBHOOK_URL || WEBHOOK_URL.includes('COLE_AQUI')) {
-        console.error('❌ ERRO: Você esqueceu de colocar a URL do n8n no código!');
+      if (!WEBHOOK_URL || WEBHOOK_URL === 'URL_NAO_CONFIGURADA') {
+        console.error('❌ ERRO: A URL do Webhook não foi encontrada no arquivo .env');
         throw new Error('URL do Webhook não configurada');
       }
 
@@ -232,10 +237,12 @@ export default function RealEstateForm() {
         throw new Error('Erro ao enviar dados para o servidor');
       }
 
-      console.log('✅ Sucesso! Dados recebidos pelo n8n.');
       setSubmitStatus('success');
+      // Opcional: Resetar o formulário após sucesso
+      // reset(); 
+      // setCurrentStep(1);
     } catch (error) {
-      console.error('❌ Erro na integração:', error);
+      console.error('Erro na integração:', error);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);
@@ -257,7 +264,7 @@ export default function RealEstateForm() {
       <div className="text-center mb-10">
         <div className="flex flex-col items-center gap-4 mb-6">
           <img 
-            src="logo.png" 
+            src={`${import.meta.env.BASE_URL}logo.png`} 
             alt="Morada Urbana Logo" 
             className="h-32 w-auto object-contain"
             referrerPolicy="no-referrer"
@@ -556,6 +563,12 @@ export default function RealEstateForm() {
             </button>
           )}
         </div>
+
+        {submitStatus === 'success' && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-center p-4 bg-emerald-50 text-emerald-700 rounded-2xl border border-emerald-100 font-medium">
+            Ficha enviada com sucesso! Nossa equipe entrará em contato.
+          </motion.div>
+        )}
 
         {submitStatus === 'error' && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-center p-4 bg-red-50 text-red-700 rounded-2xl border border-red-100 font-medium">
