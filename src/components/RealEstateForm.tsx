@@ -294,17 +294,11 @@ export default function RealEstateForm() {
     // URL de Produção como fallback definitivo
     const PROD_URL = 'https://n8n.srv1485851.hstgr.cloud/webhook/captacao-imoveis';
     
-    // FORÇAMOS A URL DE PRODUÇÃO SE ESTIVERMOS NO GITHUB PAGES
-    const isGitHubPages = window.location.hostname.includes('github.io');
-    let WEBHOOK_URL = isGitHubPages ? PROD_URL : (import.meta.env.VITE_N8N_WEBHOOK_URL || PROD_URL);
+    // MODO DE TESTE ATIVADO (Temporário para validação)
+    const TEST_URL = 'https://n8n.srv1485851.hstgr.cloud/webhook-test/captacao-imoveis';
+    let WEBHOOK_URL = TEST_URL;
     
-    console.log('🚀 V3 - SISTEMA DE TRAVA ATIVADO');
-
-    // Se a URL contiver 'webhook-test', forçamos a PROD_URL
-    if (WEBHOOK_URL.includes('/webhook-test/')) {
-      console.log('⚠️ URL de teste detectada. Forçando Produção.');
-      WEBHOOK_URL = PROD_URL;
-    }
+    console.log('🧪 MODO DE TESTE ATIVADO - Enviando para /webhook-test/');
 
     console.log('📍 URL Final:', WEBHOOK_URL);
     
