@@ -490,6 +490,7 @@ export default function RealEstateForm() {
                   <InputField label="Endereço completo" name="enderecoCompleto" required placeholder="Rua, Avenida, etc..." control={control} errors={errors} />
                 </div>
                 
+                {/* Campo de Número adicionado para melhor organização do banco de dados */}
                 <InputField label="Número" name="numero" required placeholder="Ex: 123" control={control} errors={errors} />
 
                 {['apartamento', 'cobertura', 'flat', 'studio', 'sala', 'conjunto', 'andar corporativo'].includes(tipoImovel) && (
