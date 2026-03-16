@@ -5,6 +5,7 @@ export type TipoImovel =
   | 'casa' 
   | 'cobertura' 
   | 'conjunto' 
+  | 'flat'
   | 'galpão' 
   | 'loja' 
   | 'ponto' 
@@ -27,6 +28,7 @@ export interface FormData {
 
   // Imóvel
   enderecoCompleto: string;
+  numero: string;
   bairro: string;
   cep: string;
   numeroUnidade?: string;

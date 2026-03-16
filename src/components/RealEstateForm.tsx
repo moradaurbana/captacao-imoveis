@@ -19,30 +19,30 @@ import { cn, maskCurrency, maskCPFCNPJ, maskPhone, maskCEP } from '../utils';
 import { FormData, TipoCaptacao, TipoImovel } from '../types';
 
 const TIPO_IMOVEL_OPTIONS = [
-  'Andar corporativo', 'Apartamento', 'Casa', 'Cobertura', 'Conjunto', 
+  'Andar corporativo', 'Apartamento', 'Casa', 'Cobertura', 'Conjunto', 'Flat',
   'Galpão', 'Loja', 'Ponto', 'Sala', 'Sítio', 'Sobrado', 'Studio', 'Terreno'
 ];
 
 const DIFERENCIAIS_MAP: Record<string, string[]> = {
-  'Ar condicionado': ['apartamento', 'casa', 'cobertura', 'conjunto', 'loja', 'sala', 'studio', 'andar corporativo', 'ponto'],
-  'Aquecimento a gás': ['apartamento', 'casa', 'cobertura', 'sobrado', 'studio'],
-  'Depósito': ['apartamento', 'cobertura', 'casa', 'sobrado', 'conjunto', 'andar corporativo', 'galpão', 'loja', 'ponto'],
+  'Ar condicionado': ['apartamento', 'casa', 'cobertura', 'conjunto', 'loja', 'sala', 'studio', 'andar corporativo', 'ponto', 'flat'],
+  'Aquecimento a gás': ['apartamento', 'casa', 'cobertura', 'sobrado', 'studio', 'flat'],
+  'Depósito': ['apartamento', 'cobertura', 'casa', 'sobrado', 'conjunto', 'andar corporativo', 'galpão', 'loja', 'ponto', 'flat'],
   'Lareira': ['casa', 'sobrado', 'sítio', 'cobertura'],
-  'Churrasqueira': ['casa', 'sobrado', 'sítio', 'cobertura', 'apartamento'],
+  'Churrasqueira': ['casa', 'sobrado', 'sítio', 'cobertura', 'apartamento', 'flat'],
   'Quintal': ['casa', 'sobrado', 'sítio', 'terreno', 'loja', 'ponto'],
-  'Piscina': ['casa', 'sobrado', 'sítio', 'cobertura', 'apartamento'],
-  'Varanda': ['apartamento', 'cobertura', 'casa', 'sobrado', 'studio', 'sítio'],
-  'Varanda Gourmet': ['apartamento', 'cobertura', 'sítio'],
-  'Vista Panorâmica': ['apartamento', 'cobertura', 'casa', 'sobrado', 'sítio'],
-  'Armários Planejados': ['apartamento', 'casa', 'cobertura', 'studio', 'sobrado'],
-  'Closet': ['apartamento', 'casa', 'cobertura', 'sobrado'],
-  'Lavabo': ['apartamento', 'casa', 'cobertura', 'sobrado', 'conjunto', 'sala', 'loja', 'ponto'],
-  'Cozinha Americana': ['apartamento', 'casa', 'studio', 'sobrado'],
-  'Piso de Madeira / Porcelanato': ['apartamento', 'casa', 'cobertura', 'sobrado', 'studio'],
-  'Fechadura Eletrônica': ['apartamento', 'casa', 'studio', 'sobrado', 'conjunto', 'sala', 'loja', 'ponto'],
-  'Mobiliado (Porteira Fechada)': ['apartamento', 'casa', 'cobertura', 'studio', 'sobrado'],
-  'Sacada': ['apartamento', 'cobertura', 'studio'],
-  'Aceita pet': ['apartamento', 'casa', 'cobertura', 'sobrado', 'sítio', 'studio'],
+  'Piscina': ['casa', 'sobrado', 'sítio', 'cobertura', 'apartamento', 'flat'],
+  'Varanda': ['apartamento', 'cobertura', 'casa', 'sobrado', 'studio', 'sítio', 'flat'],
+  'Varanda Gourmet': ['apartamento', 'cobertura', 'sítio', 'flat'],
+  'Vista Panorâmica': ['apartamento', 'cobertura', 'casa', 'sobrado', 'sítio', 'flat'],
+  'Armários Planejados': ['apartamento', 'casa', 'cobertura', 'studio', 'sobrado', 'flat'],
+  'Closet': ['apartamento', 'casa', 'cobertura', 'sobrado', 'flat'],
+  'Lavabo': ['apartamento', 'casa', 'cobertura', 'sobrado', 'conjunto', 'sala', 'loja', 'ponto', 'flat'],
+  'Cozinha Americana': ['apartamento', 'casa', 'studio', 'sobrado', 'flat'],
+  'Piso de Madeira / Porcelanato': ['apartamento', 'casa', 'cobertura', 'sobrado', 'studio', 'flat'],
+  'Fechadura Eletrônica': ['apartamento', 'casa', 'studio', 'sobrado', 'conjunto', 'sala', 'loja', 'ponto', 'flat'],
+  'Mobiliado (Porteira Fechada)': ['apartamento', 'casa', 'cobertura', 'studio', 'sobrado', 'flat'],
+  'Sacada': ['apartamento', 'cobertura', 'studio', 'flat'],
+  'Aceita pet': ['apartamento', 'casa', 'cobertura', 'sobrado', 'sítio', 'studio', 'flat'],
   'Piso Elevado': ['andar corporativo', 'conjunto', 'sala'],
   'Forro Rebaixado / Mineral': ['andar corporativo', 'conjunto', 'sala'],
   'Ar Condicionado Central': ['andar corporativo', 'conjunto', 'sala'],
@@ -220,6 +220,7 @@ export default function RealEstateForm() {
       celular: '',
       email: '',
       enderecoCompleto: '',
+      numero: '',
       bairro: '',
       cep: '',
       numeroUnidade: '',
@@ -276,7 +277,7 @@ export default function RealEstateForm() {
     const fieldsByStep: Record<number, (keyof FormData)[]> = {
       1: ['tipoCaptacao', 'tipoImovel'],
       2: ['nomeProprietario', 'cpfCnpj', 'celular', 'email'],
-      3: ['enderecoCompleto', 'bairro', 'cep'],
+      3: ['enderecoCompleto', 'numero', 'bairro', 'cep'],
     };
 
     const fieldsToValidate = fieldsByStep[currentStep];
@@ -486,10 +487,12 @@ export default function RealEstateForm() {
                 <InputField label="CEP" name="cep" required mask={maskCEP} placeholder="00000-000" control={control} errors={errors} />
                 <InputField label="Bairro" name="bairro" required control={control} errors={errors} />
                 <div className="md:col-span-2">
-                  <InputField label="Endereço completo" name="enderecoCompleto" required placeholder="Rua, número, complemento..." control={control} errors={errors} />
+                  <InputField label="Endereço completo" name="enderecoCompleto" required placeholder="Rua, Avenida, etc..." control={control} errors={errors} />
                 </div>
                 
-                {['apartamento', 'cobertura', 'studio', 'sala', 'conjunto', 'andar corporativo'].includes(tipoImovel) && (
+                <InputField label="Número" name="numero" required placeholder="Ex: 123" control={control} errors={errors} />
+
+                {['apartamento', 'cobertura', 'flat', 'studio', 'sala', 'conjunto', 'andar corporativo'].includes(tipoImovel) && (
                   <InputField label="Número da unidade" name="numeroUnidade" placeholder="Ex: 82" control={control} errors={errors} />
                 )}
               </div>
