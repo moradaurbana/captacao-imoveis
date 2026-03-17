@@ -16,7 +16,7 @@ export const maskCurrency = (value: string) => {
 };
 
 export const maskCPFCNPJ = (value: string) => {
-  const digits = value.replace(/\D/g, '');
+  const digits = value.replace(/\D/g, '').slice(0, 14);
   if (digits.length <= 11) {
     return digits
       .replace(/(\d{3})(\d)/, '$1.$2')

@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useForm } from 'react-hook-form';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Home, 
   User, 
   MapPin, 
   DollarSign, 
-  FileText, 
   CheckCircle2, 
-  AlertCircle,
   ChevronRight,
   Plus,
   Info,
-  Building2,
   Key
 } from 'lucide-react';
 import { cn, maskCurrency, maskCPFCNPJ, maskPhone, maskCEP } from '../utils';
-import { FormData, TipoCaptacao, TipoImovel } from '../types';
+import { FormData } from '../types';
+import FormInput from './FormInput';
+import FormSelect from './FormSelect';
+import { Controller } from 'react-hook-form';
 
 const TIPO_IMOVEL_OPTIONS = [
   'Andar corporativo', 'Apartamento', 'Casa', 'Cobertura', 'Conjunto', 'Flat',
@@ -126,7 +126,7 @@ const DIFERENCIAIS_MAP: Record<string, string[]> = {
   'Iluminação Pública': ['terreno'],
 };
 
-const SectionHeader = ({ icon: Icon, title, description }: { icon: any, title: string, description: string }) => (
+const SectionHeader = React.memo(({ icon: Icon, title, description }: { icon: any, title: string, description: string }) => (
   <div className="mb-6">
     <div className="flex items-center gap-3 mb-1">
       <div className="p-2 bg-orange-50 rounded-lg text-brand-orange">
@@ -136,75 +136,9 @@ const SectionHeader = ({ icon: Icon, title, description }: { icon: any, title: s
     </div>
     <p className="text-sm text-slate-500 ml-11">{description}</p>
   </div>
-);
+));
 
-const InputField = ({ label, name, required, placeholder, type = "text", mask, control, errors }: any) => (
-  <div className="flex flex-col gap-1.5">
-    <label className="text-sm font-medium text-slate-700">
-      {label} {required && <span className="text-red-500">*</span>}
-    </label>
-    <Controller
-      name={name}
-      control={control}
-      rules={{ required: required ? "Campo obrigatório" : false }}
-      render={({ field }) => (
-        <input
-          {...field}
-          value={field.value ?? ''}
-          type={type}
-          placeholder={placeholder}
-          onChange={(e) => {
-            const val = mask ? mask(e.target.value) : e.target.value;
-            field.onChange(val);
-          }}
-          className={cn(
-            "w-full px-4 py-2.5 bg-white border rounded-xl outline-none transition-all",
-            "focus:ring-2 focus:ring-brand-orange/10 focus:border-brand-orange",
-            errors[name as keyof FormData] ? "border-red-300 bg-red-50" : "border-slate-200"
-          )}
-        />
-      )}
-    />
-    {errors[name as keyof FormData] && (
-      <span className="text-xs text-red-500 mt-1 flex items-center gap-1">
-        <AlertCircle size={12} /> {errors[name as keyof FormData]?.message as string}
-      </span>
-    )}
-  </div>
-);
-
-const SelectField = ({ label, name, options, required, register, errors }: any) => (
-  <div className="flex flex-col gap-1.5">
-    <label className="text-sm font-medium text-slate-700">
-      {label} {required && <span className="text-red-500">*</span>}
-    </label>
-    <div className="relative">
-      <select
-        {...register(name, { required: required ? "Campo obrigatório" : false })}
-        className={cn(
-          "w-full px-4 py-2.5 bg-white border rounded-xl outline-none transition-all appearance-none",
-          "focus:ring-2 focus:ring-brand-orange/10 focus:border-brand-orange",
-          errors[name as keyof FormData] ? "border-red-300 bg-red-50" : "border-slate-200"
-        )}
-      >
-        <option value="">Selecione</option>
-        {options.map((opt: any) => {
-          const value = typeof opt === 'string' ? opt.toLowerCase() : opt.value;
-          const label = typeof opt === 'string' ? opt : opt.label;
-          return <option key={value} value={value}>{label}</option>;
-        })}
-      </select>
-      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-        <ChevronRight size={16} className="rotate-90" />
-      </div>
-    </div>
-    {errors[name as keyof FormData] && (
-      <span className="text-xs text-red-500 mt-1 flex items-center gap-1">
-        <AlertCircle size={12} /> {errors[name as keyof FormData]?.message as string}
-      </span>
-    )}
-  </div>
-);
+SectionHeader.displayName = 'SectionHeader';
 
 export default function RealEstateForm() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -423,7 +357,7 @@ export default function RealEstateForm() {
                 description="Selecione o tipo de negócio e a categoria do imóvel."
               />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <SelectField 
+                <FormSelect 
                   label="Tipo de captação" 
                   name="tipoCaptacao" 
                   options={[
@@ -434,7 +368,7 @@ export default function RealEstateForm() {
                   register={register} 
                   errors={errors} 
                 />
-                <SelectField label="Tipo de imóvel" name="tipoImovel" options={TIPO_IMOVEL_OPTIONS} required register={register} errors={errors} />
+                <FormSelect label="Tipo de imóvel" name="tipoImovel" options={TIPO_IMOVEL_OPTIONS} required register={register} errors={errors} />
               </div>
             </motion.div>
           )}
@@ -454,10 +388,10 @@ export default function RealEstateForm() {
                 description="Como podemos entrar em contato com o responsável?"
               />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InputField label="Nome completo" name="nomeProprietario" required placeholder="Ex: João Silva" control={control} errors={errors} />
-                <InputField label="CPF ou CNPJ" name="cpfCnpj" required mask={maskCPFCNPJ} placeholder="000.000.000-00" control={control} errors={errors} />
-                <InputField label="Celular / WhatsApp" name="celular" required mask={maskPhone} placeholder="(00) 00000-0000" control={control} errors={errors} />
-                <InputField label="E-mail" name="email" type="email" required placeholder="joao@exemplo.com" control={control} errors={errors} />
+                <FormInput label="Nome completo" name="nomeProprietario" required placeholder="Ex: João Silva" control={control} errors={errors} />
+                <FormInput label="CPF ou CNPJ" name="cpfCnpj" required mask={maskCPFCNPJ} placeholder="000.000.000-00" control={control} errors={errors} />
+                <FormInput label="Celular / WhatsApp" name="celular" required mask={maskPhone} placeholder="(00) 00000-0000" control={control} errors={errors} />
+                <FormInput label="E-mail" name="email" type="email" required placeholder="joao@exemplo.com" control={control} errors={errors} />
               </div>
             </motion.div>
           )}
@@ -477,35 +411,35 @@ export default function RealEstateForm() {
                 description="Onde o imóvel está localizado?"
               />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InputField label="CEP" name="cep" required mask={maskCEP} placeholder="00000-000" control={control} errors={errors} />
-                <InputField label="Bairro" name="bairro" required control={control} errors={errors} />
+                <FormInput label="CEP" name="cep" required mask={maskCEP} placeholder="00000-000" control={control} errors={errors} />
+                <FormInput label="Bairro" name="bairro" required control={control} errors={errors} />
                 <div className="md:col-span-2">
-                  <InputField label="Endereço completo" name="enderecoCompleto" required placeholder="Rua, Avenida, etc..." control={control} errors={errors} />
+                  <FormInput label="Endereço completo" name="enderecoCompleto" required placeholder="Rua, Avenida, etc..." control={control} errors={errors} />
                 </div>
                 
                 {/* Campo de Número adicionado para melhor organização do banco de dados */}
-                <InputField label="Número" name="numero" required placeholder="Ex: 123" control={control} errors={errors} />
+                <FormInput label="Número" name="numero" required placeholder="Ex: 123" control={control} errors={errors} />
 
                 {['apartamento', 'cobertura', 'flat', 'studio', 'sala', 'conjunto', 'andar corporativo'].includes(tipoImovel) && (
-                  <InputField label="Número da unidade" name="numeroUnidade" placeholder="Ex: 82" control={control} errors={errors} />
+                  <FormInput label="Número da unidade" name="numeroUnidade" placeholder="Ex: 82" control={control} errors={errors} />
                 )}
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mt-8">
-                <InputField label="Área útil (m²)" name="areaUtil" type="number" control={control} errors={errors} />
-                <InputField label="Área total (m²)" name="areaTotal" type="number" control={control} errors={errors} />
+                <FormInput label="Área útil (m²)" name="areaUtil" type="number" control={control} errors={errors} />
+                <FormInput label="Área total (m²)" name="areaTotal" type="number" control={control} errors={errors} />
                 
                 {['terreno', 'sítio'].includes(tipoImovel) && (
-                  <InputField label="Área do terreno (m²)" name="areaTerreno" type="number" control={control} errors={errors} />
+                  <FormInput label="Área do terreno (m²)" name="areaTerreno" type="number" control={control} errors={errors} />
                 )}
 
                 {['galpão', 'loja', 'ponto'].includes(tipoImovel) && (
-                  <InputField label="Pé direito (m)" name="peDireito" type="number" control={control} errors={errors} />
+                  <FormInput label="Pé direito (m)" name="peDireito" type="number" control={control} errors={errors} />
                 )}
 
                 {tipoImovel === 'terreno' && (
                   <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <SelectField 
+                    <FormSelect 
                       label="Topografia" 
                       name="topografia" 
                       options={[
@@ -545,14 +479,14 @@ export default function RealEstateForm() {
                 
                 {!['terreno', 'galpão', 'loja', 'ponto'].includes(tipoImovel) && (
                   <>
-                    <InputField label="Vagas" name="vagas" type="number" control={control} errors={errors} />
+                    <FormInput label="Vagas" name="vagas" type="number" control={control} errors={errors} />
                     {['apartamento', 'casa', 'cobertura', 'sobrado', 'studio', 'sítio'].includes(tipoImovel) && (
                       <>
-                        <InputField label="Dormitórios" name="dormitorios" type="number" control={control} errors={errors} />
-                        <InputField label="Suítes" name="suites" type="number" control={control} errors={errors} />
+                        <FormInput label="Dormitórios" name="dormitorios" type="number" control={control} errors={errors} />
+                        <FormInput label="Suítes" name="suites" type="number" control={control} errors={errors} />
                       </>
                     )}
-                    <InputField label="Banheiros" name="banheiros" type="number" control={control} errors={errors} />
+                    <FormInput label="Banheiros" name="banheiros" type="number" control={control} errors={errors} />
                   </>
                 )}
               </div>
@@ -603,40 +537,64 @@ export default function RealEstateForm() {
                 
                 {tipoCaptacao === 'venda' ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <InputField label="Valor de venda" name="valorVenda" mask={maskCurrency} placeholder="R$ 0,00" control={control} errors={errors} />
-                    <InputField label="Condomínio" name="valorCondominio" mask={maskCurrency} placeholder="R$ 0,00" control={control} errors={errors} />
-                    <InputField label="IPTU Mensal" name="valorIptu" mask={maskCurrency} placeholder="R$ 0,00" control={control} errors={errors} />
-                    <InputField label="Número da matrícula" name="numeroMatricula" control={control} errors={errors} />
+                    <FormInput label="Valor de venda" name="valorVenda" mask={maskCurrency} placeholder="R$ 0,00" control={control} errors={errors} />
+                    <FormInput label="Condomínio" name="valorCondominio" mask={maskCurrency} placeholder="R$ 0,00" control={control} errors={errors} />
+                    <FormInput label="IPTU Mensal" name="valorIptu" mask={maskCurrency} placeholder="R$ 0,00" control={control} errors={errors} />
+                    <FormInput label="Número da matrícula" name="numeroMatricula" control={control} errors={errors} />
                     
                     <div className="flex flex-col gap-3">
                       <label className="text-sm font-medium text-slate-700">Aceita proposta?</label>
-                      <div className="flex gap-4">
-                        {['Sim', 'Não'].map(val => (
-                          <label key={val} className="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" value={val} {...register('aceitaProposta')} className="accent-brand-orange" />
-                            <span className="text-sm text-slate-600">{val}</span>
-                          </label>
-                        ))}
-                      </div>
+                      <Controller
+                        name="aceitaProposta"
+                        control={control}
+                        render={({ field }) => (
+                          <div className="flex gap-4">
+                            {['Sim', 'Não'].map(val => (
+                              <label key={val} className="flex items-center gap-2 cursor-pointer">
+                                <input 
+                                  type="radio" 
+                                  value={val} 
+                                  checked={field.value === val}
+                                  onChange={() => field.onChange(val)}
+                                  className="accent-brand-orange" 
+                                />
+                                <span className="text-sm text-slate-600">{val}</span>
+                              </label>
+                            ))}
+                          </div>
+                        )}
+                      />
                     </div>
 
                     <div className="flex flex-col gap-3">
                       <label className="text-sm font-medium text-slate-700">Aceita permuta?</label>
-                      <div className="flex gap-4">
-                        {['Sim', 'Não'].map(val => (
-                          <label key={val} className="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" value={val} {...register('aceitaPermuta')} className="accent-brand-orange" />
-                            <span className="text-sm text-slate-600">{val}</span>
-                          </label>
-                        ))}
-                      </div>
+                      <Controller
+                        name="aceitaPermuta"
+                        control={control}
+                        render={({ field }) => (
+                          <div className="flex gap-4">
+                            {['Sim', 'Não'].map(val => (
+                              <label key={val} className="flex items-center gap-2 cursor-pointer">
+                                <input 
+                                  type="radio" 
+                                  value={val} 
+                                  checked={field.value === val}
+                                  onChange={() => field.onChange(val)}
+                                  className="accent-brand-orange" 
+                                />
+                                <span className="text-sm text-slate-600">{val}</span>
+                              </label>
+                            ))}
+                          </div>
+                        )}
+                      />
                     </div>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <InputField label="Valor do aluguel" name="valorAluguel" mask={maskCurrency} placeholder="R$ 0,00" control={control} errors={errors} />
-                    <InputField label="Condomínio" name="valorCondominio" mask={maskCurrency} placeholder="R$ 0,00" control={control} errors={errors} />
-                    <InputField label="IPTU Mensal" name="valorIptu" mask={maskCurrency} placeholder="R$ 0,00" control={control} errors={errors} />
+                    <FormInput label="Valor do aluguel" name="valorAluguel" mask={maskCurrency} placeholder="R$ 0,00" control={control} errors={errors} />
+                    <FormInput label="Condomínio" name="valorCondominio" mask={maskCurrency} placeholder="R$ 0,00" control={control} errors={errors} />
+                    <FormInput label="IPTU Mensal" name="valorIptu" mask={maskCurrency} placeholder="R$ 0,00" control={control} errors={errors} />
                   </div>
                 )}
 
