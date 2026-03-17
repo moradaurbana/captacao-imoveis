@@ -330,7 +330,7 @@ export default function RealEstateForm() {
         <span className="text-[10px] text-slate-400 uppercase tracking-widest mb-2 block">Versão 3.1 - DB Ready</span>
         <div className="flex flex-col items-center gap-4 mb-6">
           <img 
-            src="/logo.png" 
+            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH5gMREhAWKz9vXQAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLm3EAAAAFUlEQVRo3u3BAQ0AAADCoPdPbQ8HFAAAAPwbDAAAAb69u8AAAAAASUVORK5CYII=" 
             alt="Morada Urbana Logo" 
             className="h-32 w-auto object-contain"
             referrerPolicy="no-referrer"
