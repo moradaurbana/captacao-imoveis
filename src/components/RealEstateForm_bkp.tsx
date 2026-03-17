@@ -292,10 +292,10 @@ export default function RealEstateForm() {
     setSubmitStatus('idle');
     
     // URL de Produção como fallback definitivo
-    const PROD_URL = 'https://n8n.srv1485851.hstgr.cloud/webhook/notificacao';
+    const PROD_URL = 'https://n8n.srv1485851.hstgr.cloud/webhook/captacao-imoveis';
     
     // MODO DE TESTE ATIVADO (V4 - FORÇADA)
-    const TEST_URL = 'https://n8n.srv1485851.hstgr.cloud/webhook-test/notificacao';
+    const TEST_URL = 'https://n8n.srv1485851.hstgr.cloud/webhook-test/captacao-imoveis';
     let WEBHOOK_URL = TEST_URL;
     
     console.log('🔥 V4: MODO DE TESTE ATIVADO - ENVIANDO PARA WEBHOOK-TEST');
