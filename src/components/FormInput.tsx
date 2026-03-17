@@ -40,8 +40,9 @@ const FormInput = React.memo(({
             type={type}
             placeholder={placeholder}
             onChange={(e) => {
-              const val = mask ? mask(e.target.value) : e.target.value;
-              field.onChange(val);
+              const rawValue = e.target.value;
+              const maskedValue = mask ? mask(rawValue) : rawValue;
+              field.onChange(maskedValue);
             }}
             className={cn(
               "w-full px-4 py-2.5 bg-white border rounded-xl outline-none transition-all",
@@ -61,4 +62,5 @@ const FormInput = React.memo(({
 });
 
 FormInput.displayName = 'FormInput';
+
 export default FormInput;
