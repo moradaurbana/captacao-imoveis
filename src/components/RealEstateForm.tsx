@@ -207,7 +207,8 @@ export default function RealEstateForm() {
     fetchAddress();
   }, [cep, setValue]);
 
-  const nextStep = async () => {
+  const nextStep = async (e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
     const fieldsByStep: Record<number, (keyof FormData)[]> = {
       1: ['tipoCaptacao', 'tipoImovel'],
       2: ['nomeProprietario', 'cpfCnpj', 'celular', 'email'],
@@ -219,17 +220,26 @@ export default function RealEstateForm() {
     if (isValid) setCurrentStep(prev => prev + 1);
   };
 
-  const prevStep = () => setCurrentStep(prev => prev - 1);
+  const prevStep = (e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
+    setCurrentStep(prev => prev - 1);
+  };
 
   const onSubmit = async (data: FormData) => {
+    // Impedir envio se não estiver no último passo
+    if (currentStep !== steps.length) {
+      console.log('🚫 Tentativa de envio bloqueada: não está no último passo.');
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitStatus('idle');
     
     // URL de Produção como fallback definitivo
-    const PROD_URL = 'https://n8n.srv1485851.hstgr.cloud/webhook/notificacao';
+    const PROD_URL = 'https://n8n.srv1485851.hstgr.cloud/webhook/captacao-imoveis';
     
     // MODO DE TESTE ATIVADO (V4 - FORÇADA)
-    const TEST_URL = 'https://n8n.srv1485851.hstgr.cloud/webhook-test/notificacao';
+    const TEST_URL = 'https://n8n.srv1485851.hstgr.cloud/webhook-test/captacao-imoveis';
     let WEBHOOK_URL = TEST_URL;
     
     console.log('🔥 V4: MODO DE TESTE ATIVADO - ENVIANDO PARA WEBHOOK-TEST');
@@ -340,7 +350,19 @@ export default function RealEstateForm() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      <form 
+        onSubmit={handleSubmit(onSubmit)} 
+        onKeyDown={(e) => {
+          // Impedir que o Enter envie o formulário prematuramente
+          if (e.key === 'Enter' && e.target instanceof HTMLInputElement && e.target.type !== 'textarea') {
+            if (currentStep < steps.length) {
+              e.preventDefault();
+              nextStep();
+            }
+          }
+        }}
+        className="space-y-8"
+      >
         <AnimatePresence mode="wait">
           {/* STEP 1: OBJETIVO */}
           {currentStep === 1 && (
@@ -652,6 +674,7 @@ export default function RealEstateForm() {
         <div className="flex justify-between items-center pt-6">
           {currentStep > 1 ? (
             <button
+              key="btn-back"
               type="button"
               onClick={prevStep}
               className="px-6 py-3 bg-white border border-slate-200 text-slate-600 rounded-xl font-semibold hover:bg-slate-50 transition-all"
@@ -662,8 +685,9 @@ export default function RealEstateForm() {
 
           {currentStep < steps.length ? (
             <button
+              key="btn-next"
               type="button"
-              onClick={nextStep}
+              onClick={(e) => nextStep(e)}
               className="px-8 py-3 bg-brand-orange text-white rounded-xl font-semibold shadow-lg shadow-orange-100 hover:bg-orange-600 transition-all flex items-center gap-2"
             >
               Próximo Passo
@@ -671,6 +695,7 @@ export default function RealEstateForm() {
             </button>
           ) : (
             <button
+              key="btn-submit"
               type="submit"
               disabled={isSubmitting}
               className="px-8 py-3 bg-brand-orange text-white rounded-xl font-semibold shadow-lg shadow-orange-100 hover:bg-orange-600 transition-all disabled:opacity-70 flex items-center gap-2"
