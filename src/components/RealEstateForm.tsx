@@ -294,13 +294,12 @@ export default function RealEstateForm() {
     // URL de Produção como fallback definitivo
     const PROD_URL = 'https://n8n.srv1485851.hstgr.cloud/webhook/captacao-imoveis';
     
-    // MODO DE TESTE ATIVADO (Temporário para validação)
+    // MODO DE TESTE ATIVADO (V4 - FORÇADA)
     const TEST_URL = 'https://n8n.srv1485851.hstgr.cloud/webhook-test/captacao-imoveis';
     let WEBHOOK_URL = TEST_URL;
     
-    console.log('🧪 MODO DE TESTE ATIVADO - Enviando para /webhook-test/');
-
-    console.log('📍 URL Final:', WEBHOOK_URL);
+    console.log('🔥 V4: MODO DE TESTE ATIVADO - ENVIANDO PARA WEBHOOK-TEST');
+    console.log('📍 URL DESTINO:', WEBHOOK_URL);
     
     try {
       if (!WEBHOOK_URL || WEBHOOK_URL === 'URL_NAO_CONFIGURADA') {
@@ -320,14 +319,14 @@ export default function RealEstateForm() {
         ...data,
         // Valores limpos para o Banco de Dados (Supabase)
         valorVenda_num: cleanNumber(data.valorVenda),
-        valorLocacao_num: cleanNumber(data.valorLocacao),
+        valorLocacao_num: cleanNumber(data.valorAluguel),
         valorCondominio_num: cleanNumber(data.valorCondominio),
         valorIptu_num: cleanNumber(data.valorIptu),
         areaTotal_num: cleanNumber(data.areaTotal),
         areaUtil_num: cleanNumber(data.areaUtil),
         // Mantemos as strings originais caso queira usar em e-mails
         valorVenda: data.valorVenda,
-        valorLocacao: data.valorLocacao,
+        valorLocacao: data.valorAluguel,
         // Transformamos arrays em texto legível
         diferenciais: data.diferenciais.join(', '),
         garantiasAceitas: data.garantiasAceitas.join(', '),
@@ -368,7 +367,7 @@ export default function RealEstateForm() {
         <span className="text-[10px] text-slate-400 uppercase tracking-widest mb-2 block">Versão 3.1 - DB Ready</span>
         <div className="flex flex-col items-center gap-4 mb-6">
           <img 
-            src={`${import.meta.env.BASE_URL}logo.png`} 
+            src="/logo.png" 
             alt="Morada Urbana Logo" 
             className="h-32 w-auto object-contain"
             referrerPolicy="no-referrer"
@@ -524,11 +523,21 @@ export default function RealEstateForm() {
                 {tipoImovel === 'sítio' && (
                   <div className="md:col-span-2 flex gap-8 mt-2">
                     <label className="flex items-center gap-2 cursor-pointer">
-                      <input type="checkbox" {...register('temNascente')} className="w-4 h-4 rounded border-slate-300 text-brand-orange focus:ring-brand-orange" />
+                      <input 
+                        type="checkbox" 
+                        checked={watch('temNascente')}
+                        onChange={(e) => setValue('temNascente', e.target.checked)}
+                        className="w-4 h-4 rounded border-slate-300 text-brand-orange focus:ring-brand-orange" 
+                      />
                       <span className="text-sm text-slate-700">Tem nascente?</span>
                     </label>
                     <label className="flex items-center gap-2 cursor-pointer">
-                      <input type="checkbox" {...register('temMataNativa')} className="w-4 h-4 rounded border-slate-300 text-brand-orange focus:ring-brand-orange" />
+                      <input 
+                        type="checkbox" 
+                        checked={watch('temMataNativa')}
+                        onChange={(e) => setValue('temMataNativa', e.target.checked)}
+                        className="w-4 h-4 rounded border-slate-300 text-brand-orange focus:ring-brand-orange" 
+                      />
                       <span className="text-sm text-slate-700">Tem mata nativa?</span>
                     </label>
                   </div>
@@ -666,7 +675,12 @@ export default function RealEstateForm() {
                   />
                   <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100">
                     <label className="flex gap-4 cursor-pointer">
-                      <input type="checkbox" {...register('autorizaDivulgacao', { required: true })} className="w-5 h-5 rounded border-slate-300 text-brand-orange focus:ring-brand-orange" />
+                      <input 
+                        type="checkbox" 
+                        checked={watch('autorizaDivulgacao')}
+                        onChange={(e) => setValue('autorizaDivulgacao', e.target.checked)}
+                        className="w-5 h-5 rounded border-slate-300 text-brand-orange focus:ring-brand-orange" 
+                      />
                       <span className="text-sm text-slate-600">Autorizo a Morada Urbana a divulgar o imóvel.</span>
                     </label>
                   </div>
