@@ -144,7 +144,6 @@ export default function RealEstateForm() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [isTestMode, setIsTestMode] = useState(false);
 
   const { register, handleSubmit, watch, control, setValue, trigger, formState: { errors } } = useForm<FormData>({
     defaultValues: {
@@ -242,10 +241,10 @@ export default function RealEstateForm() {
     // URL de Teste (Botão Executar no n8n)
     const TEST_URL = 'https://n8n.srv1485851.hstgr.cloud/webhook-test/captacao-imoveis';
     
-    // MUDANÇA DINÂMICA:
-    let WEBHOOK_URL = isTestMode ? TEST_URL : PROD_URL;
+    // MUDANÇA PARA PRODUÇÃO:
+    let WEBHOOK_URL = PROD_URL;
     
-    console.log(isTestMode ? '🧪 MODO DE TESTE ATIVADO' : '🚀 MODO DE PRODUÇÃO ATIVADO');
+    console.log('🚀 ENVIANDO PARA WEBHOOK DE PRODUÇÃO');
     console.log('📍 URL DESTINO:', WEBHOOK_URL);
     
     try {
@@ -310,23 +309,7 @@ export default function RealEstateForm() {
   return (
     <div className="max-w-4xl mx-auto py-12 px-4 sm:px-6">
       {/* Header */}
-      <div className="text-center mb-10 relative">
-        <div className="absolute right-0 top-0 flex items-center gap-2">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Modo Teste</span>
-          <button 
-            type="button"
-            onClick={() => setIsTestMode(!isTestMode)}
-            className={cn(
-              "w-10 h-5 rounded-full transition-all relative",
-              isTestMode ? "bg-amber-500" : "bg-slate-200"
-            )}
-          >
-            <div className={cn(
-              "absolute top-1 w-3 h-3 rounded-full bg-white transition-all",
-              isTestMode ? "left-6" : "left-1"
-            )} />
-          </button>
-        </div>
+      <div className="text-center mb-10">
         <span className="text-[10px] text-slate-400 uppercase tracking-widest mb-2 block">Versão 3.1 - DB Ready</span>
         <div className="flex flex-col items-center gap-4 mb-6">
           <img 
