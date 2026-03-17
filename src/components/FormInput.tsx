@@ -39,6 +39,7 @@ const FormInput = React.memo(({
             value={field.value ?? ''}
             type={type}
             placeholder={placeholder}
+            maxLength={name === 'cpfCnpj' ? 18 : name === 'celular' ? 15 : name === 'cep' ? 9 : undefined}
             onChange={(e) => {
               const rawValue = e.target.value;
               const maskedValue = mask ? mask(rawValue) : rawValue;

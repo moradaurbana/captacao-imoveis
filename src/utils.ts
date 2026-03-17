@@ -16,35 +16,39 @@ export const maskCurrency = (value: string) => {
 };
 
 export const maskCPFCNPJ = (value: string) => {
-  const v = value.replace(/\D/g, '').slice(0, 14);
-  
+  const v = value.replace(/\D/g, '');
   if (v.length <= 11) {
     return v
       .replace(/(\d{3})(\d)/, '$1.$2')
       .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+      .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+      .slice(0, 14);
   }
-  
   return v
-    .replace(/^(\d{2})(\d)/, '$1.$2')
-    .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
-    .replace(/\.(\d{3})(\d)/, '.$1/$2')
-    .replace(/(\d{4})(\d{1,2})$/, '$1-$2');
+    .replace(/(\d{2})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1/$2')
+    .replace(/(\d{4})(\d{1,2})$/, '$1-$2')
+    .slice(0, 18);
 };
 
 export const maskPhone = (value: string) => {
-  const digits = value.replace(/\D/g, '').slice(0, 11);
-  if (digits.length <= 10) {
-    return digits
+  const v = value.replace(/\D/g, '');
+  if (v.length <= 10) {
+    return v
       .replace(/(\d{2})(\d)/, '($1) $2')
-      .replace(/(\d{4})(\d)/, '$1-$2');
+      .replace(/(\d{4})(\d)/, '$1-$2')
+      .slice(0, 14);
   }
-  return digits
+  return v
     .replace(/(\d{2})(\d)/, '($1) $2')
-    .replace(/(\d{5})(\d)/, '$1-$2');
+    .replace(/(\d{5})(\d)/, '$1-$2')
+    .slice(0, 15);
 };
 
 export const maskCEP = (value: string) => {
-  const digits = value.replace(/\D/g, '').slice(0, 8);
-  return digits.replace(/(\d{5})(\d)/, '$1-$2');
+  return value
+    .replace(/\D/g, '')
+    .replace(/(\d{5})(\d)/, '$1-$2')
+    .slice(0, 9);
 };
