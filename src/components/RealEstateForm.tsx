@@ -329,12 +329,17 @@ export default function RealEstateForm() {
         </div>
         <span className="text-[10px] text-slate-400 uppercase tracking-widest mb-2 block">Versão 3.1 - DB Ready</span>
         <div className="flex flex-col items-center gap-4 mb-6">
-          <img 
-            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='100' viewBox='0 0 300 100'%3E%3Crect width='300' height='100' rx='12' fill='%23f97316'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-weight='bold' font-size='24' fill='white'%3EMorada Urbana%3C/text%3E%3C/svg%3E" 
-            alt="Morada Urbana Logo" 
-            className="h-24 w-auto object-contain"
-            referrerPolicy="no-referrer"
-          />
+          <div className="h-24 flex items-center justify-center">
+            <img
+              src={`${import.meta.env.BASE_URL}logo.png`}
+              alt="Morada Urbana Logo"
+              className="h-full w-auto object-contain"
+              onError={(e) => {
+                console.error('Erro ao carregar o logo:', e.currentTarget.src);
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+          </div>
         </div>
         <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Ficha de Captação de Imóveis</h1>
         <p className="text-slate-500 mt-2">Morada Urbana - Consultoria Imobiliária</p>
